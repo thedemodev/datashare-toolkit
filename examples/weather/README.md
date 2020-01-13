@@ -19,19 +19,19 @@ associate the table data with its specific ingestion cycle.
 # create new bucket
 BUCKET=$(head -1 /dev/random | md5)
 gsutil mb gs://${BUCKET}
-cd bq-datashare-toolkit/ingestion/function
+cd bq-datashare-toolkit/ingestion/batch
 
 # deploy ingestion function to bucket
 npm run deploy -- --trigger-bucket=gs://${BUCKET}
-cd ../../examples/weather/config/ingestion
+cd ../../examples/weather/observation/config/
 
 # deploy configuration files for source data
-gsutil cp observation.schema.json gs://${BUCKET}/bqds/
-gsutil cp observation.transform.sql gs://${BUCKET}/bqds/
-cd ../../data
+gsutil cp schema.json gs://${BUCKET}/bqds/weather/observation/config/schema.json
+gsutil cp observation.transform.sql gs://${BUCKET}/bqds/weather/observation/config/transform.sql
+cd ../data
 
 # copy source data to bucket
-gsutil cp weather.observation.csv.gz gs://${BUCKET}
+gsutil cp sample-weather-observations.csv.gz gs://${BUCKET}
 sleep 60 # wait for ingestion
 
 # check number of records ingested
